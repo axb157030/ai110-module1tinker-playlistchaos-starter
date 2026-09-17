@@ -58,7 +58,7 @@ def normalize_song(raw: Song) -> Song:
 
 
 def classify_song(song: Song, profile: Dict[str, object]) -> str:
-    """Return a mood label given a song and user profile."""
+    """Return the playlist name that matches a song and user profile."""
     energy = song.get("energy", 0)
     genre = song.get("genre", "")
     title = str(song.get("title", "")).lower()
@@ -94,6 +94,8 @@ def build_playlists(songs: List[Song], profile: Dict[str, object]) -> PlaylistMa
 
     for song in songs:
         normalized = normalize_song(song)
+        # classify_song returns the dictionary key where this song belongs. From GitHub Copilot
+        # Asked to add a comment to explain the function."
         mood = classify_song(normalized, profile)
         normalized["mood"] = mood
         playlists[mood].append(normalized)

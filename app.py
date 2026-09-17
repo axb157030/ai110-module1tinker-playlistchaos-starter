@@ -184,7 +184,10 @@ def default_songs():
 
 
 def profile_sidebar():
-    """Render and update the user profile."""
+    # From GitHub Copilot: "Render and update the user profile controls in the sidebar. 
+    # From GitHub Copilot: "Render profile controls and save their values for this session."
+    # Asked to add a comment to explain the function."
+    """Render profile controls and save their values for this session."""
     st.sidebar.header("Mood profile")
 
     profile = st.session_state.profile
@@ -238,6 +241,7 @@ def add_song_sidebar():
     tags_text = st.sidebar.text_input("Tags (comma separated)")
 
     if st.sidebar.button("Add to playlist"):
+        # Store raw user input first; playlist_logic assigns the mood later.
         raw_tags = [t.strip() for t in tags_text.split(",")]
         tags = [t for t in raw_tags if t]
 
@@ -256,7 +260,7 @@ def add_song_sidebar():
 
 
 def playlist_tabs(playlists):
-    """Render playlists in tabs."""
+    """Render one tab for each playlist returned by playlist_logic."""
     include_mixed = st.session_state.profile.get("include_mixed", True)
 
     tab_labels = ["Hype", "Chill"]
@@ -271,6 +275,7 @@ def playlist_tabs(playlists):
 
 
 def render_playlist(label, songs):
+    """Render one playlist and its artist search box."""
     st.subheader(f"{label} playlist")
     if not songs:
         st.write("No songs in this playlist.")
@@ -375,6 +380,7 @@ def clear_controls():
 
 
 def main():
+    """Build the page, connect UI input to playlist logic, then render results."""
     st.set_page_config(page_title="Playlist Chaos", layout="wide")
     st.title("Playlist Chaos")
 
@@ -383,6 +389,7 @@ def main():
         "The code runs, but the behavior is a bit unpredictable."
     )
 
+    # UI setup: create controls and keep their values in session state.
     init_state()
     profile_sidebar()
     add_song_sidebar()
@@ -391,9 +398,13 @@ def main():
     profile = st.session_state.profile
     songs = st.session_state.songs
 
+    # Logic boundary: playlist_logic decides each song's mood.
     base_playlists = build_playlists(songs, profile)
+
+    # Keep the merge step explicit so another playlist source can be added later.
     merged_playlists = merge_playlists(base_playlists, {})
 
+    # UI output: display the playlists and the tools that use them.
     playlist_tabs(merged_playlists)
     st.divider()
     lucky_section(merged_playlists)
